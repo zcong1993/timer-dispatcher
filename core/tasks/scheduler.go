@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Scheduler is struct of timer tasks scheduler
 type Scheduler struct {
 	interval time.Duration
 	ch       chan *TimerTask
@@ -15,6 +16,7 @@ type Scheduler struct {
 	busy     bool
 }
 
+// NewScheduler init a new Scheduler instance
 func NewScheduler(interval time.Duration, chanBufferSize int) *Scheduler {
 	hp := &TimerTasksHeap{}
 	heap.Init(hp)
@@ -57,6 +59,7 @@ func (s *Scheduler) check() {
 			continue
 		}
 		if task.Timestamp <= now {
+			// will block if not consume immediately, can tweak chanBufferSize
 			s.ch <- task
 		} else {
 			// put back task
@@ -67,6 +70,7 @@ func (s *Scheduler) check() {
 	s.busy = false
 }
 
+// Push add new timer tasks to heap
 func (s *Scheduler) Push(value string, timestamp int64) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -75,14 +79,17 @@ func (s *Scheduler) Push(value string, timestamp int64) {
 	heap.Push(s.store, t)
 }
 
+// MsgCh get message channel
 func (s *Scheduler) MsgCh() chan *TimerTask {
 	return s.ch
 }
 
+// Close stop scheduler
 func (s *Scheduler) Close() {
 	close(s.stop)
 }
 
+// Len return heap length
 func (s *Scheduler) Len() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

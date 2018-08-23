@@ -1,0 +1,71 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "td.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/rpc/add": {
+      "post": {
+        "operationId": "Add",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/pbResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbTask"
+            }
+          }
+        ],
+        "tags": [
+          "TdService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pbResp": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbTask": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}

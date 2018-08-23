@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+
+service TdService {
+    rpc Add(Task) returns (Resp) {
+        option (google.api.http) = {
+            post: "/v1/rpc/add"
+            body: "*"
+        };
+    }
+}
+
+message Task {
+    string value = 1;
+    int64 timestamp = 2;
+}
+
+message Resp {
+    bool ok = 1;
+    string message = 2;
+}
