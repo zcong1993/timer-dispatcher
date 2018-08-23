@@ -8,7 +8,7 @@ import (
 
 type Scheduler struct {
 	interval time.Duration
-	ch       chan string
+	ch       chan *TimerTask
 	store    *TimerTasksHeap
 	stop     chan interface{}
 	mu       sync.RWMutex
@@ -20,7 +20,7 @@ func NewScheduler(interval time.Duration, chanBufferSize int) *Scheduler {
 	heap.Init(hp)
 	s := &Scheduler{
 		interval: interval,
-		ch:       make(chan string, chanBufferSize),
+		ch:       make(chan *TimerTask, chanBufferSize),
 		store:    hp,
 		stop:     make(chan interface{}),
 		busy:     false,
@@ -50,15 +50,14 @@ func (s *Scheduler) check() {
 	defer s.mu.Unlock()
 
 	s.busy = true
-	now := time.Now().Unix()
+	now := time.Now().UnixNano()
 	for s.store.Len() > 0 {
-		task, ok := s.store.Pop().(*TimerTask)
+		task, ok := heap.Pop(s.store).(*TimerTask)
 		if !ok {
 			continue
 		}
-		if task.timestamp <= now {
-			println(task.value, task.timestamp)
-			s.ch <- task.value
+		if task.Timestamp <= now {
+			s.ch <- task
 		} else {
 			// put back task
 			s.store.Push(task)
@@ -76,7 +75,7 @@ func (s *Scheduler) Push(value string, timestamp int64) {
 	heap.Push(s.store, t)
 }
 
-func (s *Scheduler) MsgCh() chan string {
+func (s *Scheduler) MsgCh() chan *TimerTask {
 	return s.ch
 }
 

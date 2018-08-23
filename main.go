@@ -11,16 +11,11 @@ func main() {
 
 	ch := s.MsgCh()
 
-	println(time.Now().Unix())
-
-	for i := 0; i < 10; i++ {
-		s.Push(fmt.Sprintf("haha - %d", i), time.Now().Add(time.Duration(int32(i))*time.Second).Unix())
+	for i := 0; i < 200; i++ {
+		s.Push(fmt.Sprintf("haha - %d", i), time.Now().Add(time.Duration(int32(i))*time.Second).UnixNano())
 	}
 
-	println(time.Now().Unix())
-
 	for msg := range ch {
-		println(msg)
-		println(s.Len())
+		println(msg.Timestamp, msg.Value)
 	}
 }

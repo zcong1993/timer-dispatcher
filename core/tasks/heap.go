@@ -6,8 +6,8 @@ import (
 
 type TimerTask struct {
 	index     int
-	timestamp int64
-	value     string
+	Timestamp int64
+	Value     string
 }
 
 var sequence = 0
@@ -19,7 +19,7 @@ func (td TimerTasksHeap) Len() int {
 }
 
 func (td TimerTasksHeap) Less(i, j int) bool {
-	return td[i].timestamp > td[j].timestamp
+	return td[i].Timestamp < td[j].Timestamp
 }
 
 func (td TimerTasksHeap) Swap(i, j int) {
@@ -47,14 +47,14 @@ func (td *TimerTasksHeap) Pop() interface{} {
 }
 
 func (td *TimerTasksHeap) update(item *TimerTask, value string, timestamp int64) {
-	item.timestamp = timestamp
-	item.value = value
+	item.Timestamp = timestamp
+	item.Value = value
 	heap.Fix(td, item.index)
 }
 
 func NewTask(value string, timestamp int64) *TimerTask {
 	return &TimerTask{
-		value:     value,
-		timestamp: timestamp,
+		Value:     value,
+		Timestamp: timestamp,
 	}
 }
